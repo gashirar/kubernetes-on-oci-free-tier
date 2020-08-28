@@ -1,0 +1,20 @@
+---
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: JoinConfiguration
+caCertPath: /etc/kubernetes/pki/ca.crt
+discovery:
+  bootstrapToken:
+    apiServerEndpoint: {{ control_plane_endpoint_ip }}:6443
+    token: {{ kubeadm_token_create_command.stdout }}
+    unsafeSkipCAVerification: true
+  timeout: 5m0s
+  tlsBootstrapToken:  {{ kubeadm_token_create_command.stdout }}
+nodeRegistration:
+  criSocket: /var/run/dockershim.sock
+  name: {{ ansible_hostname }}
+  taints: null
+---
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+kubernetesVersion: {{ kube_version }}
+failSwapOn: false

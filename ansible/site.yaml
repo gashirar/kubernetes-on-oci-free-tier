@@ -1,0 +1,20 @@
+---
+- hosts: kube_cluster
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: docker, tags: docker }
+
+- hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: kubernetes/master, tags: master }
+    - { role: cni, tags: cni }
+    - { role: metrics-server, tags: metrics-server}
+
+- hosts: worker
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: kubernetes/node, tags: node }

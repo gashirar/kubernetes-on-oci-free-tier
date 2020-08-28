@@ -1,0 +1,27 @@
+---
+
+- name: Reset Kubernetes component
+  shell: "kubeadm reset --force"
+  register: reset_cluster
+
+- name: Generate Token
+  command: kubeadm token create
+  register: kubeadm_token_create_command
+  delegate_to: "{{ groups['master'][0] }}"
+
+- name: Copy Kubeadm Configuration
+  template:
+    src: kubeadm-config.yaml.j2
+    dest: "/etc/kubernetes/kubeadm-config.yaml"
+
+- name: Join to Kubernetes cluster
+  when: reset_cluster is succeeded
+  shell: | 
+      kubeadm join --config "/etc/kubernetes/kubeadm-config.yaml" --ignore-preflight-errors=swap
+  register: join_cluster
+#  notify:
+#    - Recreate kube-dns
+#
+#- name: Label as Infrastructure Node.
+#  command: kubectl label nodes {{ ansible_hostname }} node-role.kubernetes.io/worker=""  --kubeconfig=/etc/kubernetes/admin.conf
+#  delegate_to: "{{ groups['master'][0] }}"

@@ -1,0 +1,21 @@
+# OCI Provider Settings
+tenancy_ocid         = ""
+compartment_ocid     = ""
+user_ocid            = ""
+private_key_path     = ""
+private_key_password = ""
+fingerprint          = ""
+region               = "ap-tokyo-1"
+ssh_public_key_path  = ""
+cluster_name         = ""
+
+# VCN
+vcn_cidr_block           = "10.0.0.0/16"
+master_subnet_cidr_block = "10.0.0.0/24"
+worker_subnet_cidr_block = "10.0.1.0/24"
+
+shape = "VM.Standard.E2.1.Micro"
+
+## Oracle-Linux-7.8
+os_user  = "opc"
+image_id = "ocid1.image.oc1.ap-tokyo-1.aaaaaaaawuqkyea4y5khemhmw4j3yqmekacaan4d5yb2kvkkustj737fikqa"

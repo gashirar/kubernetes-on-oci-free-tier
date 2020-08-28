@@ -1,0 +1,17 @@
+
+# Kubernetes
+kube_version: v1.19.0
+
+service_cidr: "10.96.0.0/12"
+pod_network_cidr: "10.244.0.0/16"
+
+systemd_dir: /lib/systemd/system
+system_env_dir: /etc/sysconfig
+network_dir: /etc/kubernetes/network
+kubeadmin_config: /etc/kubernetes/admin.conf
+kube_addon_dir: /etc/kubernetes/addon
+
+# temporary directory used by additional features
+tmp_dir: /tmp/kubeadm-ansible-files
+
+master_ip: "{{ hostvars[groups['master'][0]]['ansible_default_ipv4'].address | default(groups['master'][0]) }}"

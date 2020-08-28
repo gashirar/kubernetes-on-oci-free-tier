@@ -1,0 +1,66 @@
+---
+
+- name: Install Kubernetes packages
+  include_tasks: pkg.yaml
+
+- name: Stop and disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: False
+
+- name: Disable selinux (ephemeral)
+  shell: setenforce 0
+
+- name: Disable selinux (persistent)
+  selinux:
+    state: disabled
+
+- set_fact:
+    swap_file_path: /swapfile
+
+- name: Create swap file
+  command: dd if=/dev/zero of={{ swap_file_path }} bs={{ ansible_memtotal_mb }} count=1M
+  args:
+    creates: '{{ swap_file_path }}'
+
+- name: Change swap file mode
+  file:
+    path: '{{ swap_file_path }}'
+    mode: '0600'
+
+- command: file {{ swap_file_path }}
+  register: swap_file_test
+
+- command: mkswap {{ swap_file_path }}
+  when: swap_file_test.stdout.find('swap file') == -1
+
+- command: swapon {{ swap_file_path }}
+  when: ansible_swaptotal_mb < 1
+
+- mount:
+    name: swap
+    src: '{{ swap_file_path }}'
+    fstype: swap
+    opts: defaults
+    passno: '0'
+    dump: '0'
+    state: present
+
+- name: modprebe br_netfilter
+  command: modprobe br_netfilter
+
+- name: Disable swappiness and pass bridged IPv4 traffic to iptable's chains
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+  with_items:
+    - { name: 'net.bridge.bridge-nf-call-iptables', value: '1' }
+    - { name: 'net.bridge.bridge-nf-call-ip6tables', value: '1' }
+
+- name: Reload kubelet daemon
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    enabled: yes

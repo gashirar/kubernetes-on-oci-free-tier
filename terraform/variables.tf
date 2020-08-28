@@ -1,0 +1,15 @@
+variable "tenancy_ocid" {}
+variable "compartment_ocid" {}
+variable "user_ocid" {}
+variable "fingerprint" {}
+variable "private_key_path" {}
+variable "region" {}
+variable "cluster_name" {}
+variable "ssh_public_key_path"  {}
+variable "vcn_cidr_block" {}
+variable "master_subnet_cidr_block" {}
+variable "worker_subnet_cidr_block" {}
+variable "private_key_password" {}
+variable "os_user" {}
+variable "image_id" {}
+variable "shape" {}
