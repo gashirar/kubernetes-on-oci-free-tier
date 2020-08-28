@@ -29,4 +29,5 @@ override.tf.json
 # example: *tfplan*
 
 terraform/main.tfvars
+ansible/hosts.ini
 .idea/**
