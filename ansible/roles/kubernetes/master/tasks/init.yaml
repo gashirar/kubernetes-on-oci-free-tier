@@ -24,12 +24,6 @@
 - name: Set fact certificate key
   set_fact: certificate_key={{ init_upload_certs.stdout_lines[2] }}
 
-- name: exec success
-  debug: var=init_upload_certs
-
-- name: hoge
-  debug: var=certificate_key
-
 - name: Create Kubernetes config directory
   file:
     path: ".kube/"
