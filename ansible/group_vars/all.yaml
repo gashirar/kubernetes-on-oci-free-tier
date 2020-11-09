@@ -2,8 +2,12 @@
 # Kubernetes
 kube_version: v1.19.0
 
-service_cidr: "10.96.0.0/12"
+# cni_plugin ( calico/flannel )
+#cni_plugin: calico
+#pod_network_cidr: "10.244.0.0/16"
+cni_plugin: flannel
 pod_network_cidr: "10.244.0.0/16"
+service_cidr: "10.96.0.0/12"
 
 systemd_dir: /lib/systemd/system
 system_env_dir: /etc/sysconfig

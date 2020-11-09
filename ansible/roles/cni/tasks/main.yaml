@@ -5,15 +5,15 @@
     path: "{{ network_dir }}"
     state: directory
 
-- name: "Copy Calico YAML files"
+- name: "Copy {{ cni_plugin }} YAML files"
   template:
     src: "{{ item }}"
     dest: "{{ network_dir }}/{{ item | basename | regex_replace('\\.j2','') }}"
   with_fileglob:
-    - ../templates/calico.yaml.j2
+    - ../templates/{{ cni_plugin }}.yaml.j2
 
 
-- name: "Create Calico network daemonset"
+- name: "Create {{ cni_plugin }} network component"
   command: kubectl apply --kubeconfig={{ kubeadmin_config }} -f {{ network_dir }}/
   delegate_to: "{{ groups['master'][0] }}"
   run_once: true
