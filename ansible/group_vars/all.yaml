@@ -1,7 +1,3 @@
-
-# Kubernetes
-kube_version: v1.19.0
-
 # cni_plugin ( calico/flannel )
 #cni_plugin: calico
 #pod_network_cidr: "10.244.0.0/16"

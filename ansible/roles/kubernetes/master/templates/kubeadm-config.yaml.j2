@@ -1,7 +1,6 @@
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
-kubernetesVersion: {{ kube_version }}
 controlPlaneEndpoint: "{{ control_plane_endpoint_ip }}"
 networking:
   serviceSubnet: "{{ service_cidr }}"
