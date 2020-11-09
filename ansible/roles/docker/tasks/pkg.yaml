@@ -1,29 +1,6 @@
 ---
-- name: Remove installed docker
-  yum:
-    name:
-      - docker
-      - docker-client
-      - docker-client-latest
-      - docker-common
-      - docker-latest
-      - docker-latest-logrotate
-      - docker-logrotate
-      - docker-engine
-    state: absent
-
-- name: Install yum-utils
-  yum:
-    name:
-      - yum-utils
-    state: present
-
-- name: Add docker yum repositry
-  command: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-
 - name: Install newest docker
   yum:
     name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
+      - docker-cli.x86_64
+      - docker-engine.x86_64
