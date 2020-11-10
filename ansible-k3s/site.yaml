@@ -1,0 +1,18 @@
+---
+- hosts: kube_cluster
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: commons/pre-install, tags: pre-install }
+
+- hosts: master
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: kubernetes/master, tags: master }
+
+- hosts: worker
+  gather_facts: yes
+  become: yes
+  roles:
+    - { role: kubernetes/node, tags: node }

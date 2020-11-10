@@ -30,3 +30,5 @@ ansible_user=${OS_USER}
 control_plane_endpoint_ip=${MASTER_IP}
 
 EOF
+
+cp ../ansible/hosts.ini ../ansible-k3s/hosts.ini

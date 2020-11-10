@@ -1,0 +1,14 @@
+---
+
+- name: Stop and disable firewalld
+  service:
+    name: firewalld
+    state: stopped
+    enabled: False
+
+- name: Disable selinux (ephemeral)
+  shell: setenforce 0
+
+- name: Disable selinux (persistent)
+  selinux:
+    state: disabled

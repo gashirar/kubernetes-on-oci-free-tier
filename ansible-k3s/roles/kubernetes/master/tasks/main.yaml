@@ -1,0 +1,36 @@
+---
+- name: Starting k3s server
+  shell: curl -sfL https://get.k3s.io | sh -s - --tls-san {{ control_plane_endpoint_ip }} --node-ip {{ ansible_default_ipv4.address }}
+
+# https://github.com/rancher/k3s/issues/977
+- name: Insert a rule (iptables -I INPUT 3 -s 10.42.0.0/16 -j ACCEPT)
+  retries: 10
+  delay: 10
+  register: result
+  until: result.rc == 0
+  shell: iptables -I INPUT 3 -s 10.42.0.0/16 -j ACCEPT
+
+# https://github.com/rancher/k3s/issues/977
+- name: Insert a rule (iptables -I INPUT 3 -d 10.42.0.0/16 -j ACCEPT)
+  retries: 10
+  delay: 10
+  register: result
+  until: result.rc == 0
+  shell: iptables -I INPUT 3 -d 10.42.0.0/16 -j ACCEPT
+
+- name: "Copy kubeconfig file"
+  command: cp /etc/rancher/k3s/k3s.yaml /etc/rancher/k3s/admin.conf
+
+- name: "Replace URL"
+  replace: >-
+    dest='/etc/rancher/k3s/admin.conf'
+    regexp='https://127.0.0.1:6443'
+    replace='https://{{ control_plane_endpoint_ip }}:6443'
+
+- name: "Copy config file"
+  fetch:
+    src: /etc/rancher/k3s/admin.conf
+    dest: "{{ lookup('env', 'HOME') }}/admin.conf"
+    flat: yes
+  run_once: yes
+  ignore_errors: yes

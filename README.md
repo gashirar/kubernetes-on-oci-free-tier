@@ -25,8 +25,15 @@ Set the parameters.
 ```
 
 ## run Ansible Playbook
+
+### kubeadm
 ```bash
 ./bin/ansible.sh
+```
+
+### k3s
+```bash
+./bin/ansible-k3s.sh
 ```
 
 ## Set kubeconfig

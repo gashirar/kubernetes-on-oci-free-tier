@@ -1,0 +1,24 @@
+---
+- name: Get Token
+  command: cat /var/lib/rancher/k3s/server/node-token
+  register: token
+  delegate_to: "{{ groups['master'][0] }}"
+
+- name: Join to Kubernetes cluster
+  shell: curl -sfL https://get.k3s.io | K3S_URL=https://{{ master_ip }}:6443 K3S_TOKEN={{ token.stdout }} sh -s - --node-ip {{ ansible_default_ipv4.address }}
+
+# https://github.com/rancher/k3s/issues/977
+- name: Insert a rule (iptables -I INPUT 3 -s 10.42.0.0/16 -j ACCEPT)
+  retries: 10
+  delay: 10
+  register: result
+  until: result.rc == 0
+  shell: iptables -I INPUT 3 -s 10.42.0.0/16 -j ACCEPT
+
+# https://github.com/rancher/k3s/issues/977
+- name: Insert a rule (iptables -I INPUT 3 -d 10.42.0.0/16 -j ACCEPT)
+  retries: 10
+  delay: 10
+  register: result
+  until: result.rc == 0
+  shell: iptables -I INPUT 3 -d 10.42.0.0/16 -j ACCEPT
