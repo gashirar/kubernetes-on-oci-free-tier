@@ -30,4 +30,6 @@ override.tf.json
 
 terraform/main.tfvars
 ansible/hosts.ini
+ansible-k3s/hosts.ini
+ansible-kubeadm/hosts.ini
 .idea/**
