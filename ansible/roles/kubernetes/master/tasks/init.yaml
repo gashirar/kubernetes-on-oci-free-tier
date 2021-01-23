@@ -14,7 +14,7 @@
   shell: |
     kubeadm init --config "/etc/kubernetes/kubeadm-config.yaml" \
                  --upload-certs \
-                 --ignore-preflight-errors=swap
+                 --ignore-preflight-errors=Swap,Mem
   register: init_cluster
 
 - name: Generate certificate key
