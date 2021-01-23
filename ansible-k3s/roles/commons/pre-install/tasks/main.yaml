@@ -1,14 +1,30 @@
 ---
 
-- name: Stop and disable firewalld
-  service:
-    name: firewalld
-    state: stopped
-    enabled: False
+- name: Install apt-transport-https and curl
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    pkg:
+      - apt-transport-https
+      - curl
 
-- name: Disable selinux (ephemeral)
-  shell: setenforce 0
+- name: Set the policy for the INPUT chain to ACCEPT
+  ansible.builtin.iptables:
+    chain: INPUT
+    policy: ACCEPT
 
-- name: Disable selinux (persistent)
-  selinux:
-    state: disabled
+- name: Set the policy for the OUTPUT chain to ACCEPT
+  ansible.builtin.iptables:
+    chain: OUTPUT
+    policy: ACCEPT
+
+- name: Set the policy for the FORWARD chain to ACCEPT
+  ansible.builtin.iptables:
+    chain: FORWARD
+    policy: ACCEPT
+
+- name: Iptables flush filter
+  ansible.builtin.iptables:
+    chain: "{{ item }}"
+    flush: yes
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]
