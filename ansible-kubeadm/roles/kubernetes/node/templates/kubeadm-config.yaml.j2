@@ -10,10 +10,10 @@ discovery:
   timeout: 5m0s
   tlsBootstrapToken:  {{ kubeadm_token_create_command.stdout }}
 nodeRegistration:
-  criSocket: /var/run/dockershim.sock
   name: {{ ansible_hostname }}
   taints: null
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 failSwapOn: false
+cgroupDriver: systemd
