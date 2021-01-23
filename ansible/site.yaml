@@ -3,6 +3,7 @@
   gather_facts: yes
   become: yes
   roles:
+    - { role: commons/pre-install, tags: pre-install}
     - { role: docker, tags: docker }
 
 - hosts: master

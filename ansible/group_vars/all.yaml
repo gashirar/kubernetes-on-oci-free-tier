@@ -10,6 +10,7 @@ system_env_dir: /etc/sysconfig
 network_dir: /etc/kubernetes/network
 kubeadmin_config: /etc/kubernetes/admin.conf
 kube_addon_dir: /etc/kubernetes/addon
+swap_file_path: /swapfile
 
 # temporary directory used by additional features
 tmp_dir: /tmp/kubeadm-ansible-files

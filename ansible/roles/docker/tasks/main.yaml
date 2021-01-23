@@ -1,6 +1,23 @@
 ---
-- name: Install Docker container engine
-  include_tasks: pkg.yaml
+
+- name: Add an Apt signing key, uses whichever key is at the URL
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add docker repository into sources list
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+    state: present
+
+- name: Install apt-transport-https and curl
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
 
 - name: Enable and check Docker service
   systemd:

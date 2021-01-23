@@ -1,3 +1,0 @@
----
-dependencies:
-  - { role: commons/pre-install , pkgs: ["kubelet", "kubeadm"] }

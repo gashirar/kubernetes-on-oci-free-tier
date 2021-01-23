@@ -1,44 +1,52 @@
 ---
 
-- name: Install Kubernetes packages
-  include_tasks: pkg.yaml
+- name: Install apt-transport-https and curl
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    pkg:
+      - apt-transport-https
+      - curl
 
-- name: Stop and disable firewalld
-  service:
-    name: firewalld
-    state: stopped
-    enabled: False
+- name: Add an Apt signing key, uses whichever key is at the URL
+  ansible.builtin.apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
 
-- name: Disable selinux (ephemeral)
-  shell: setenforce 0
+- name: Add Kubernetes repository into sources list
+  ansible.builtin.apt_repository:
+    repo: "deb https://apt.kubernetes.io kubernetes-xenial main"
+    state: present
 
-- name: Disable selinux (persistent)
-  selinux:
-    state: disabled
+- name: Install kubeadm, kubelet, kubectl
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    pkg:
+      - kubeadm
+      - kubelet
+      - kubectl
 
-- set_fact:
-    swap_file_path: /swapfile
-
-- name: Create swap file
-  command: dd if=/dev/zero of={{ swap_file_path }} bs={{ ansible_memtotal_mb }} count=1M
+- name: zero padding
+  command: dd if=/dev/zero of={{ swap_file_path }} bs=1M count={{ ansible_memtotal_mb * 2 }}
   args:
     creates: '{{ swap_file_path }}'
 
-- name: Change swap file mode
+- name: chmod swap file
   file:
     path: '{{ swap_file_path }}'
     mode: '0600'
 
-- command: file {{ swap_file_path }}
-  register: swap_file_test
+- name: set up a Linux swap area
+  command: mkswap {{ swap_file_path }}
+  when: ansible_swaptotal_mb == 0
 
-- command: mkswap {{ swap_file_path }}
-  when: swap_file_test.stdout.find('swap file') == -1
+- name: enable file for swapping
+  command: swapon {{ swap_file_path }}
+  when: ansible_swaptotal_mb == 0
 
-- command: swapon {{ swap_file_path }}
-  when: ansible_swaptotal_mb < 1
-
-- mount:
+- name: mount swap
+  mount:
     name: swap
     src: '{{ swap_file_path }}'
     fstype: swap
@@ -64,3 +72,24 @@
     name: kubelet
     daemon_reload: yes
     enabled: yes
+
+- name: Set the policy for the INPUT chain to ACCEPT
+  ansible.builtin.iptables:
+    chain: INPUT
+    policy: ACCEPT
+
+- name: Set the policy for the OUTPUT chain to ACCEPT
+  ansible.builtin.iptables:
+    chain: OUTPUT
+    policy: ACCEPT
+
+- name: Set the policy for the FORWARD chain to ACCEPT
+  ansible.builtin.iptables:
+    chain: FORWARD
+    policy: ACCEPT
+
+- name: Iptables flush filter
+  ansible.builtin.iptables:
+    chain: "{{ item }}"
+    flush: yes
+  with_items:  [ 'INPUT', 'FORWARD', 'OUTPUT' ]

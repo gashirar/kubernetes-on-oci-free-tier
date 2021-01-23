@@ -1,6 +1,0 @@
----
-- name: Install newest docker
-  yum:
-    name:
-      - docker-cli.x86_64
-      - docker-engine.x86_64
