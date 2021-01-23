@@ -18,22 +18,16 @@ cp terraform/main.tfvars.example terraform/main.tfvars
 ```
 Set the parameters.
 
-## run Terraform
-
-```
-./bin/terraform.sh
-```
-
-## run Ansible Playbook
+## Create Cluster
 
 ### kubeadm
 ```bash
-./bin/ansible.sh
+./bin/setup-by-kubeadm.sh
 ```
 
 ### k3s
 ```bash
-./bin/ansible-k3s.sh
+./bin/setup-by-k3s.sh
 ```
 
 ## Set kubeconfig
